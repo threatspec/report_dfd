@@ -78,23 +78,23 @@ threats = {
     "reviews": {}
 }
 
-for boundary_id, boundary in data["boundaries"].iteritems():
+for boundary_id, boundary in data["boundaries"].items():
     boundary_id = strip_id(boundary_id)
     boundaries[boundary_id] = boundary
     boundaries[boundary_id]["components"] = {}
 
-for boundary_id, component_obj in data["components"].iteritems():
-    for component_id, component in component_obj.iteritems():
+for boundary_id, component_obj in data["components"].items():
+    for component_id, component in component_obj.items():
         boundary_id = strip_id(boundary_id)
         component_id = merge_component_id(boundary_id, strip_id(component_id))
 
         if boundary_id in boundaries:
             boundaries[boundary_id]["components"][component_id] = component["name"]
 
-for source_boundary_id, source_obj in data["dfd"].iteritems():
-    for source_component_id, dest_boundary_obj in source_obj.iteritems():
-        for dest_boundary_id, dest_component_obj in dest_boundary_obj.iteritems():
-            for dest_component_id, dest_obj in dest_component_obj.iteritems():
+for source_boundary_id, source_obj in data["dfd"].items():
+    for source_component_id, dest_boundary_obj in source_obj.items():
+        for dest_boundary_id, dest_component_obj in dest_boundary_obj.items():
+            for dest_component_id, dest_obj in dest_component_obj.items():
 
                 source_boundary_id = strip_id(source_boundary_id)
                 source_component_id = strip_id(source_component_id)
@@ -127,9 +127,9 @@ description_key = {
     "acceptances": "acceptance"
 }
 
-for project_id, project in data["projects"].iteritems():
+for project_id, project in data["projects"].items():
     for threat_type in ["exposures", "mitigations", "transfers", "acceptances"]:
-        for threat_type_id, threat_type_obj in data["projects"][project_id][threat_type].iteritems():
+        for threat_type_id, threat_type_obj in data["projects"][project_id][threat_type].items():
             for obj in threat_type_obj:
                 threat_id = obj["threat"]
                 threat_text = data["threats"][threat_id]["name"]
@@ -143,7 +143,7 @@ for project_id, project in data["projects"].iteritems():
 
                 threats[threat_type][threat_gid]["components"].append(merge_component_id(strip_id(obj["boundary"]), strip_id(obj["component"])))
 
-    for review_id, reviews in data["projects"][project_id]["reviews"].iteritems():
+    for review_id, reviews in data["projects"][project_id]["reviews"].items():
         for review in reviews:
             review_gid = make_threat_gid(review_id)
 
@@ -157,10 +157,10 @@ for project_id, project in data["projects"].iteritems():
 
 # Start adding to mermaid
 
-for boundary_id, boundary in boundaries.iteritems():
+for boundary_id, boundary in boundaries.items():
     mermaid += "    subgraph {}\n".format(boundary["name"])
 
-    for component_id, component in boundary["components"].iteritems():
+    for component_id, component in boundary["components"].items():
         mermaid += "        {}(\"{}\")\n".format(component_id, component)
 
     if "edges" in boundary:
@@ -178,7 +178,7 @@ for boundary_id, boundary in boundaries.iteritems():
     mermaid += "    end\n\n"
 
 for threat_type in ["exposures", "mitigations", "transfers", "acceptances", "reviews"]:
-    for threat_type_id, threat_type_obj in threats[threat_type].iteritems():
+    for threat_type_id, threat_type_obj in threats[threat_type].items():
         mermaid += "    {}>\"{}\"]\n".format(threat_type_id, threat_type_obj["text"])
         mermaid += "    class {} {}\n".format(threat_type_id, threat_type)
 
@@ -198,4 +198,4 @@ for (source_id, dest_id, edge_type, edge_name) in global_edges:
 
     mermaid += "    {} {} {}\n".format(source_id, arrow, dest_id)
 
-print mermaid
+print(mermaid)
